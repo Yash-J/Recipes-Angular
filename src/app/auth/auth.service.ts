@@ -19,7 +19,7 @@ export interface AuthResponseData {
 }
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  //user = new BehaviorSubject< User >(null);
+  // user = new BehaviorSubject< User >(null);
   private tokenExpirationTimer: any;
   constructor(private http: HttpClient, private router: Router, private store: Store<fromApp.AppState>) {}
   signup(email: string, password: string) {
@@ -56,7 +56,7 @@ export class AuthService {
     const loadedUser = new User(userData.email, userData.id, userData._token, new Date(userData._tokenExpirationDate));
     if ( loadedUser.token) {
       // this.user.next(loadedUser);
-      this.store.dispatch(new AuthActions.Login({
+      this.store.dispatch(new AuthActions.AuthenticateSuccess({
         email: loadedUser.email,
         userId: loadedUser.id,
         token: loadedUser.token,
@@ -86,14 +86,14 @@ export class AuthService {
     const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
     const user = new User(email, userId, token, expirationDate);
    // this.user.next(user);
-    this.store.dispatch( new AuthActions.Login({email: email, userId: userId, token: token, expirationDate: expirationDate}));
+    this.store.dispatch( new AuthActions.AuthenticateSuccess({email: email, userId: userId, token: token, expirationDate: expirationDate}));
     this.autoLogout(expiresIn * 1000);
     localStorage.setItem ('userData', JSON.stringify(user));
   }
 
   private handleError(errorRes: HttpErrorResponse) {
     let errorMessage = 'An unnkown error occurred !';
-    if(!errorRes.error || !errorRes.error.error){
+    if (!errorRes.error || !errorRes.error.error) {
       return throwError(errorMessage);
     }
     switch (errorRes.error.error.message) {
